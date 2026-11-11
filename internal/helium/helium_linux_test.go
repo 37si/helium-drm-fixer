@@ -10,6 +10,16 @@ import (
 	"testing"
 )
 
+func testHome(t *testing.T) string {
+	t.Helper()
+
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+
+	return home
+}
+
 func TestFindOverrideVersioned(t *testing.T) {
 	root := t.TempDir()
 	version := filepath.Join(root, "131.0.6778.86")
@@ -48,8 +58,7 @@ func TestFindOverrideMissing(t *testing.T) {
 }
 
 func TestTarget(t *testing.T) {
-	home := t.TempDir()
-	t.Setenv("HOME", home)
+	home := testHome(t)
 
 	userData := filepath.Join(home, ".config", "net.imput.helium")
 	if err := os.MkdirAll(userData, 0o755); err != nil {
@@ -73,7 +82,7 @@ func TestTarget(t *testing.T) {
 }
 
 func TestTargetWithoutUserData(t *testing.T) {
-	t.Setenv("HOME", t.TempDir())
+	testHome(t)
 
 	if _, _, err := Target(Install{}, "4.10.2891.0"); !errors.Is(err, ErrNoUserData) {
 		t.Fatalf("expected ErrNoUserData, got %v", err)
@@ -119,8 +128,7 @@ func writeInstalledCDM(t *testing.T, dir, version string) string {
 }
 
 func TestInstalledListsNewestFirst(t *testing.T) {
-	home := t.TempDir()
-	t.Setenv("HOME", home)
+	home := testHome(t)
 
 	root := filepath.Join(home, ".config", "net.imput.helium", "WidevineCdm")
 	writeInstalledCDM(t, filepath.Join(root, "4.10.2900.0"), "4.10.2900.0")
@@ -136,8 +144,7 @@ func TestInstalledListsNewestFirst(t *testing.T) {
 }
 
 func TestInstalledFollowsHint(t *testing.T) {
-	home := t.TempDir()
-	t.Setenv("HOME", home)
+	home := testHome(t)
 
 	root := filepath.Join(home, ".config", "net.imput.helium", "WidevineCdm")
 	older := writeInstalledCDM(t, filepath.Join(root, "4.10.2900.0"), "4.10.2900.0")
@@ -157,8 +164,7 @@ func TestInstalledFollowsHint(t *testing.T) {
 }
 
 func TestInstalledIgnoresStaleHint(t *testing.T) {
-	home := t.TempDir()
-	t.Setenv("HOME", home)
+	home := testHome(t)
 
 	root := filepath.Join(home, ".config", "net.imput.helium", "WidevineCdm")
 	writeInstalledCDM(t, filepath.Join(root, "4.10.2900.0"), "4.10.2900.0")
@@ -174,8 +180,7 @@ func TestInstalledIgnoresStaleHint(t *testing.T) {
 }
 
 func TestTargetRejectsUnsafeVersion(t *testing.T) {
-	home := t.TempDir()
-	t.Setenv("HOME", home)
+	home := testHome(t)
 	if err := os.MkdirAll(filepath.Join(home, ".config", "net.imput.helium"), 0o755); err != nil {
 		t.Fatal(err)
 	}

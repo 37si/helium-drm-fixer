@@ -485,7 +485,7 @@ func safeJoin(root, name string) (string, error) {
 	if clean == "." {
 		return root, nil
 	}
-	if filepath.IsAbs(clean) || clean == ".." || strings.HasPrefix(clean, ".."+separator) {
+	if filepath.IsAbs(clean) || hasParent(clean) {
 		return "", fmt.Errorf("%w: %q escapes the archive", ErrBadPackage, name)
 	}
 
@@ -495,6 +495,18 @@ func safeJoin(root, name string) (string, error) {
 	}
 
 	return target, nil
+}
+
+func hasParent(name string) bool {
+	for _, part := range strings.FieldsFunc(name, func(r rune) bool {
+		return r == '/' || r == '\\'
+	}) {
+		if part == ".." {
+			return true
+		}
+	}
+
+	return false
 }
 
 func extractFile(entry *zip.File, target string) error {
