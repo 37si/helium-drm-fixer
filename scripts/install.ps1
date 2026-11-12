@@ -28,7 +28,11 @@ try {
     $binary = Join-Path $tmp 'hdf.exe'
     Invoke-WebRequest -Uri "$base/$name" -OutFile $binary -Headers @{ 'User-Agent' = 'hdf' }
 
-    $sums = Invoke-WebRequest -Uri "$base/sha256.txt" -Headers @{ 'User-Agent' = 'hdf' } | Select-Object -ExpandProperty Content
+    $sums = (Invoke-WebRequest -Uri "$base/sha256.txt" -Headers @{ 'User-Agent' = 'hdf' }).Content
+    if ($sums -is [byte[]]) {
+        $sums = [System.Text.Encoding]::UTF8.GetString($sums)
+    }
+
     $line = ($sums -split "`n") | Where-Object {
         $parts = $_ -split '\s+'
         $parts.Count -ge 2 -and $parts[1].TrimStart('*') -eq $name

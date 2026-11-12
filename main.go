@@ -25,7 +25,7 @@ import (
 	"hdf/internal/tui"
 )
 
-var version = "1.0.0"
+var version = "dev"
 
 var repo = "37si/helium-drm-fixer"
 

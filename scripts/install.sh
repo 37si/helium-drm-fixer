@@ -40,7 +40,17 @@ echo "downloading $name"
 curl -fsSL "$base/$name" -o "$tmp/hdf"
 curl -fsSL "$base/sha256.txt" -o "$tmp/sha256.txt"
 
-expected="$(awk -v name="$name" '$2 == name { print $1 }' "$tmp/sha256.txt")"
+expected="$(awk -v name="$name" '
+  {
+    file = $2
+    sub(/^\*/, "", file)
+    sub(/\r$/, "", file)
+    if (file == name) {
+      print $1
+      exit
+    }
+  }
+' "$tmp/sha256.txt")"
 if [ -z "$expected" ]; then
   echo "sha256.txt has no entry for $name" >&2
   exit 1
@@ -48,8 +58,11 @@ fi
 
 if command -v sha256sum >/dev/null 2>&1; then
   actual="$(sha256sum "$tmp/hdf" | awk '{ print $1 }')"
-else
+elif command -v shasum >/dev/null 2>&1; then
   actual="$(shasum -a 256 "$tmp/hdf" | awk '{ print $1 }')"
+else
+  echo "need sha256sum or shasum to verify the download" >&2
+  exit 1
 fi
 
 if [ "$expected" != "$actual" ]; then

@@ -93,7 +93,7 @@ func showHelp(args []string) error {
 
 func release(args []string) error {
 	fs := flag.NewFlagSet("release", flag.ExitOnError)
-	version := fs.String("version", "1.0.0", "version stamped into the binary")
+	version := fs.String("version", "dev", "version stamped into the binary")
 	repo := fs.String("repo", "", "repository stamped into the binary")
 	dir := fs.String("out", "dist", "directory to write binaries to")
 

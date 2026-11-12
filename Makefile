@@ -5,7 +5,7 @@ GOARCH  := $(shell $(GO) env GOARCH)
 EXE     := $(if $(filter windows,$(GOOS)),.exe,)
 
 REPO    ?= 37si/helium-drm-fixer
-VERSION ?= 1.0.0
+VERSION ?= dev
 
 LDFLAGS := -s -w -X main.version=$(VERSION) -X main.repo=$(REPO)
 MK      := $(GO) run ./tools/mk
