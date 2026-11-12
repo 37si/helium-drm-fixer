@@ -42,6 +42,33 @@ make build
 
 The compiled binary will be available in `bin/hdf` (`bin/hdf.exe` on Windows).
 
+## Uninstall
+
+**Linux / macOS**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/37si/helium-drm-fixer/main/scripts/uninstall.sh | sh
+```
+
+**Windows (PowerShell)**
+
+```powershell
+irm https://raw.githubusercontent.com/37si/helium-drm-fixer/main/scripts/uninstall.ps1 | iex
+```
+
+This removes the `hdf` binary and, on Windows, the user PATH entry. Settings, logs and backups are left alone so you can reinstall later.
+
+To remove those too:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/37si/helium-drm-fixer/main/scripts/uninstall.sh | sh -s -- --purge
+```
+
+```powershell
+$env:HDF_PURGE = '1'
+irm https://raw.githubusercontent.com/37si/helium-drm-fixer/main/scripts/uninstall.ps1 | iex
+```
+
 ## Usage
 
 Run `hdf` without any arguments to open the interactive interface. You can browse detected browsers, check available Widevine versions and choose a source to install from.

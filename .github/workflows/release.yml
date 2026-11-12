@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Version to publish, without the leading v
+        description: Version to publish
         required: true
         default: 0.0.0-dev
 
@@ -139,7 +139,7 @@ jobs:
       - name: Point the installers at this repository
         run: |
           set -euo pipefail
-          for script in install.sh install.ps1; do
+          for script in install.sh install.ps1 uninstall.sh uninstall.ps1; do
             sed "s|37si/helium-drm-fixer|${GITHUB_REPOSITORY}|g" "scripts/${script}" > "dist/${script}"
           done
           head -8 dist/install.sh
